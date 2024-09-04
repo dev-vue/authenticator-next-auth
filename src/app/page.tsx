@@ -112,6 +112,18 @@ export default function Home() {
                 alt="line-logo"
               />
             </button>
+            <button
+              type="button"
+              className="flex justify-center items-center p-2 w-10 h-10 bg-white rounded-sm hover:bg-slate-200"
+              onClick={() => LogIn("thaid")}
+            >
+              <Image
+                src={"/images/Thaid_logo.png"}
+                width={40}
+                height={40}
+                alt="thaid"
+              />
+            </button>
           </div>
         </>
       )}

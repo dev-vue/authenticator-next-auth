@@ -44,12 +44,57 @@ export const authOptions: NextAuthOptions = {
                 }
             }
         }),
+        {
+            id: "thaid",
+            name: "thaid",
+            type: "oauth",
+            version: '2.0',
+            clientId: String(process.env.THAID_CLIENT_ID),
+            clientSecret: String(process.env.THAID_CLIENT_SECRET),
+            wellKnown: "https://imauth.bora.dopa.go.th/.well-known/openid-configuration",
+            authorization: {
+                url: "https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/",
+                params:
+                {
+                    response_type: "code",
+                    state: "1234",
+                    redirect_uri: "http://localhost:3000/api/auth/callback/thaid",
+                    scope: "openid pid address gender birthdate given_name middle_name family_name name given_name_en middle_name_en family_name_en name_en title title_en ial smartcard_code date_of_expiry date_of_issuance"
+                },
+            },
+            client: {
+                authorization_signed_response_alg: 'ES256',
+                id_token_signed_response_alg: 'ES256',
+            },
+            idToken: true,
+            checks: ["state"],
+            profile(profile) {
+                return {
+                    id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture,
+                }
+            },
+        }
     ],
     callbacks: {
-        async signIn({ account, profile, user }: any) {
+        async jwt({ token, user, account, trigger, session }: any) {
+            console.log("token", token)
+            console.log("user", user)
+            console.log("account", account)
+
+            return token;
+        },
+        async signIn({ account, profile, user, credentials }: any) {
+            console.log("--------------------------------------------------------------------------------")
+            console.log("account.provider", account.provider)
+            console.log("account.credentials", account.credentials)
+
             if (account.provider == "azure-ad") {
                 console.log("azure-ad profile", profile)
                 console.log("azure-ad user", user)
+                console.log("azure-ad credentials", credentials)
                 return true
             }
             else if (account.provider == "line") {
